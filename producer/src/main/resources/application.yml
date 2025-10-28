@@ -1,6 +1,37 @@
 spring:
   application:
     name: producer
-  kafka:
-    producer:
-      bootstrap-servers: localhost:9092
+  cloud:
+    function:
+      definition: sendRiderLocation;sendRiderStatus
+    stream:
+      bindings:
+        sendRiderLocation-out-0:
+          destination: my-topic
+          content-type: application/json
+          binder: kafka
+        sendRiderStatus-out-0:
+          destination: my-topic-2
+          content-type: text/plain
+          binder: kafka
+      poller:
+        fixed-delay: 1000
+
+      binders:
+        kafka:
+          type: kafka
+          environment:
+            spring:
+              kafka:
+                bootstrap-servers: localhost:9092
+#  kafka:
+#    producer:
+#      bootstrap-servers: localhost:9092
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#      properties:
+#        spring.json.add.type.headers: false
+#  cloud:
+#    function:
+#      definition: uppercase
+#    function.web.path: /uppercase
